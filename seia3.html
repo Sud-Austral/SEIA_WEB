@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleo Público por Sexo - Chile</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #1a3a5f;
+            --secondary-color: #e63946;
+            --accent-color: #457b9d;
+            --light-color: #f1faee;
+            --dark-color: #1d3557;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        .navbar {
+            background-color: var(--primary-color) !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+        }
+
+        .section {
+            padding: 60px 0;
+        }
+
+        .section-title {
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 40px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .section-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 80px;
+            height: 4px;
+            background-color: var(--secondary-color);
+        }
+
+        .card {
+            border: none;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0,0,0,.05);
+            transition: transform 0.3s ease;
+            height: 100%;
+            margin-bottom: 20px;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            background-color: var(--accent-color);
+            color: white;
+            font-weight: 600;
+            border-radius: 10px 10px 0 0 !important;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 20px 0;
+        }
+
+        .analysis-box {
+            background-color: var(--light-color);
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .analysis-box h4 {
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        .filter-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,.05);
+        }
+
+        .filter-container label {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        .filter-container select {
+            border-radius: 5px;
+            border: 1px solid #ced4da;
+        }
+
+        .stats-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,.1);
+        }
+
+        .stats-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stats-card p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .nav-tabs .nav-link {
+            color: var(--dark-color);
+            font-weight: 600;
+            border: none;
+            border-radius: 5px 5px 0 0;
+        }
+
+        .nav-tabs .nav-link.active {
+            background-color: var(--accent-color);
+            color: white;
+        }
+
+        .hero-section {
+            background: linear-gradient(rgba(26, 58, 95, 0.85), rgba(26, 58, 95, 0.85)), url('https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-section p {
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .conclusion-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,.05);
+        }
+
+        .conclusion-card h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            background-color: var(--dark-color);
+            color: white;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .chart-container {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark sticky-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="bi bi-bar-chart-line-fill me-2"></i>Empleo Público por Sexo</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#presentacion">Presentación</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#resumen">Resumen</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#participacion">Participación</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#remuneraciones">Remuneraciones</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#indicadores">Indicadores</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#conclusiones">Conclusiones</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Sección de presentación -->
+    <section id="presentacion" class="hero-section">
+        <div class="container">
+            <h1>Análisis de Empleo Público por Sexo en Chile</h1>
+            <p class="lead">Explora datos detallados sobre participación, remuneraciones e indicadores de equidad en el sector público chileno (2022-2025)</p>
+            <div class="mt-4">
+                <a href="#resumen" class="btn btn-light btn-lg me-2">Ver Resumen</a>
+                <a href="#participacion" class="btn btn-outline-light btn-lg">Explorar Datos</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de resumen -->
+    <section id="resumen" class="section">
+        <div class="container">
+            <h2 class="section-title">Resumen General</h2>
+            
+            <div class="filter-container">
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="resumenYear" class="form-label">Seleccionar Año:</label>
+                        <select id="resumenYear" class="form-select">
+                            <option value="2022">2022</option>
+                            <option value="2023">2023</option>
+                            <option value="2024">2024</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h3 id="totalPersonas">732,880</h3>
+                        <p>Total Personas</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h3 id="porcentajeMujeres">65.5%</h3>
+                        <p>Mujeres</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h3 id="brechaSalarial">19.2%</h3>
+                        <p>Brecha Salarial</p>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <h3 id="remuneracionPromedio">$1,494,905</h3>
+                        <p>Remuneración Promedio</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Participación por Sexo</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="resumenParticipacionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="mb-0">Remuneración Promedio por Sexo</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="chart-container">
+                                <canvas id="resumenRemuneracionChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="analysis-box">
+                <h4>Análisis del Resumen</h4>
+                <p id="resumenAnalysis">En el año 2022, el empleo público en Chile contaba con 732,880 personas, de las cuales el 65.5% son mujeres y el 34.5% son hombres. La brecha salarial fue del 19.2%, lo que indica que las mujeres ganan en promedio un 19.2% menos que los hombres. La remuneración promedio general fue de $1,494,905 CLP mensuales.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de participación -->
+    <section id="participacion" class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">Participación por Sexo</h2>
+            
+            <ul class="nav nav-tabs" id="participacionTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="global-tab" data-bs-toggle="tab" data-bs-target="#global" type="button" role="tab" aria-controls="global" aria-selected="true">Global</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="porAno-tab" data-bs-toggle="tab" data-bs-target="#porAno" type="button" role="tab" aria-controls="porAno" aria-selected="false">Por Año</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="porTipoContrato-tab" data-bs-toggle="tab" data-bs-target="#porTipoContrato" type="button" role="tab" aria-controls="porTipoContrato" aria-selected="false">Por Tipo de Contrato</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="porClaseEdad-tab" data-bs-toggle="tab" data-bs-target="#porClaseEdad" type="button" role="tab" aria-controls="porClaseEdad" aria-selected="false">Por Clase de Edad</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="porOrganismo-tab" data-bs-toggle="tab" data-bs-target="#porOrganismo" type="button" role="tab" aria-controls="porOrganismo" aria-selected="false">Por Organismo</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content mt-4" id="participacionTabContent">
+                <!-- Tab Global -->
+                <div class="tab-pane fade show active" id="global" role="tabpanel" aria-labelledby="global-tab">
+                    <div class="chart-container">
+                        <canvas id="participacionGlobalChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Participación Global</h4>
+                        <p>La participación femenina en el empleo público chileno se ha mantenido consistentemente por encima del 65% durante todo el período analizado (2022-2025). Esto refleja una mayor presencia de mujeres en el sector público en comparación con el sector privado. La tendencia muestra un ligero aumento en la participación masculina en los últimos años, pasando de 34.5% en 2022 a 35.0% en 2025.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Por Año -->
+                <div class="tab-pane fade" id="porAno" role="tabpanel" aria-labelledby="porAno-tab">
+                    <div class="chart-container">
+                        <canvas id="participacionPorAnoChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Participación por Año</h4>
+                        <p>El análisis anual muestra que la participación femenina ha disminuido ligeramente del 65.5% en 2022 al 65.0% en 2025, mientras que la participación masculina ha aumentado del 34.5% al 35.0% en el mismo período. Este cambio, aunque pequeño, podría indicar una tendencia hacia una mayor equidad de género en el empleo público.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Por Tipo de Contrato -->
+                <div class="tab-pane fade" id="porTipoContrato" role="tabpanel" aria-labelledby="porTipoContrato-tab">
+                    <div class="filter-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="tipoContratoYear" class="form-label">Seleccionar Año:</label>
+                                <select id="tipoContratoYear" class="form-select">
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="participacionTipoContratoChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Participación por Tipo de Contrato</h4>
+                        <p>Los tipos de contrato con mayor participación femenina son "Cod Trabajo" (73.1% en 2022) y "Planta" (65.9% en 2022). En contraste, "Honorarios" muestra una distribución más equitativa (58.9% mujeres en 2022). El contrato "Contrata" también presenta una alta participación femenina (64.1% en 2022), lo que sugiere que las mujeres predominan en ciertos tipos de contratos dentro del sector público.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Por Clase de Edad -->
+                <div class="tab-pane fade" id="porClaseEdad" role="tabpanel" aria-labelledby="porClaseEdad-tab">
+                    <div class="filter-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="claseEdadYear" class="form-label">Seleccionar Año:</label>
+                                <select id="claseEdadYear" class="form-select">
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="participacionClaseEdadChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Participación por Clase de Edad</h4>
+                        <p>La participación femenina es más pronunciada en el grupo de 18 a 30 años (70.5% en 2022) y disminuye gradualmente con la edad. En el grupo de 65 a 85 años, la participación masculina es mayor (57.0% en 2022). Esto sugiere que las mujeres ingresan más temprano al empleo público, pero los hombres tienden a permanecer más tiempo en el sector hasta edades más avanzadas.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Por Organismo -->
+                <div class="tab-pane fade" id="porOrganismo" role="tabpanel" aria-labelledby="porOrganismo-tab">
+                    <div class="filter-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="organismoYear" class="form-label">Seleccionar Año:</label>
+                                <select id="organismoYear" class="form-select">
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="participacionOrganismoChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Participación por Tipo de Organismo</h4>
+                        <p>Las "Corporaciones Municipales" muestran la mayor participación femenina (70.1% en 2022), seguidas por los "Ministerios" (64.7% en 2022). Los "Municipios" también presentan una alta participación femenina (62.8% en 2022). En contraste, "Otros Organismos" tienen una distribución más equitativa (57.7% mujeres en 2022). Estos patrones reflejan la segregación ocupacional por tipo de institución dentro del sector público.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de remuneraciones -->
+    <section id="remuneraciones" class="section">
+        <div class="container">
+            <h2 class="section-title">Remuneraciones por Sexo</h2>
+            
+            <ul class="nav nav-tabs" id="remuneracionesTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="remGlobal-tab" data-bs-toggle="tab" data-bs-target="#remGlobal" type="button" role="tab" aria-controls="remGlobal" aria-selected="true">Global</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="remPorAno-tab" data-bs-toggle="tab" data-bs-target="#remPorAno" type="button" role="tab" aria-controls="remPorAno" aria-selected="false">Por Año</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="remPorTipoContrato-tab" data-bs-toggle="tab" data-bs-target="#remPorTipoContrato" type="button" role="tab" aria-controls="remPorTipoContrato" aria-selected="false">Por Tipo de Contrato</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="remPorClaseEdad-tab" data-bs-toggle="tab" data-bs-target="#remPorClaseEdad" type="button" role="tab" aria-controls="remPorClaseEdad" aria-selected="false">Por Clase de Edad</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content mt-4" id="remuneracionesTabContent">
+                <!-- Tab Global -->
+                <div class="tab-pane fade show active" id="remGlobal" role="tabpanel" aria-labelledby="remGlobal-tab">
+                    <div class="chart-container">
+                        <canvas id="remuneracionesGlobalChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Remuneraciones Global</h4>
+                        <p>La masa salarial total en el sector público ha mostrado un crecimiento constante durante el período analizado, pasando de $1.09 trillones en 2022 a $1.59 trillones en 2025. Sin embargo, la distribución por sexo muestra que las mujeres concentran el 60.1% de la masa salarial total, a pesar de representar el 65.3% del empleo público. Esto indica que, en promedio, los hombres ocupan posiciones mejor remuneradas dentro del sector público.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Por Año -->
+                <div class="tab-pane fade" id="remPorAno" role="tabpanel" aria-labelledby="remPorAno-tab">
+                    <div class="chart-container">
+                        <canvas id="remuneracionesPorAnoChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Remuneraciones por Año</h4>
+                        <p>La remuneración promedio ha aumentado para ambos sexos durante el período analizado. Para los hombres, pasó de $1,712,638 en 2022 a $2,115,821 en 2025, mientras que para las mujeres aumentó de $1,383,804 a $1,739,808 en el mismo período. A pesar de estos incrementos, la brecha salarial se ha mantenido relativamente estable, alrededor del 18%, lo que indica que las mejoras salariales no han sido suficientes para cerrar la brecha de género.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Por Tipo de Contrato -->
+                <div class="tab-pane fade" id="remPorTipoContrato" role="tabpanel" aria-labelledby="remPorTipoContrato-tab">
+                    <div class="filter-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="remTipoContratoYear" class="form-label">Seleccionar Año:</label>
+                                <select id="remTipoContratoYear" class="form-select">
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="remuneracionesTipoContratoChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Remuneraciones por Tipo de Contrato</h4>
+                        <p>El tipo de contrato con mayor brecha salarial es "Honorarios" (12.9% en 2022), seguido de "Contrata" (19.8% en 2022) y "Planta" (16.5% en 2022). "Cod Trabajo" presenta una brecha intermedia (18.8% en 2022). Estos datos sugieren que la brecha salarial varía significativamente según el tipo de contrato, siendo más pronunciada en contratos de honorarios y contrata.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Por Clase de Edad -->
+                <div class="tab-pane fade" id="remPorClaseEdad" role="tabpanel" aria-labelledby="remPorClaseEdad-tab">
+                    <div class="filter-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="remClaseEdadYear" class="form-label">Seleccionar Año:</label>
+                                <select id="remClaseEdadYear" class="form-select">
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="remuneracionesClaseEdadChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Remuneraciones por Clase de Edad</h4>
+                        <p>La brecha salarial es más pronunciada en el grupo de 30 a 50 años (20.1% en 2022) y disminuye en los grupos de mayor edad. En el grupo de 65 a 85 años, la brecha es mínima (7.9% en 2022). Esto sugiere que la brecha salarial es más significativa en las edades laborales principales, mientras que en la etapa de prejubilación y jubilación, las diferencias salariales entre hombres y mujeres tienden a reducirse.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de indicadores -->
+    <section id="indicadores" class="section bg-light">
+        <div class="container">
+            <h2 class="section-title">Indicadores de Equidad</h2>
+            
+            <ul class="nav nav-tabs" id="indicadoresTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="brechaGlobal-tab" data-bs-toggle="tab" data-bs-target="#brechaGlobal" type="button" role="tab" aria-controls="brechaGlobal" aria-selected="true">Brecha Salarial</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="segOcupacional-tab" data-bs-toggle="tab" data-bs-target="#segOcupacional" type="button" role="tab" aria-controls="segOcupacional" aria-selected="false">Segregación Ocupacional</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="indicadoresPorAno-tab" data-bs-toggle="tab" data-bs-target="#indicadoresPorAno" type="button" role="tab" aria-controls="indicadoresPorAno" aria-selected="false">Por Año</button>
+                </li>
+            </ul>
+            
+            <div class="tab-content mt-4" id="indicadoresTabContent">
+                <!-- Tab Brecha Salarial -->
+                <div class="tab-pane fade show active" id="brechaGlobal" role="tabpanel" aria-labelledby="brechaGlobal-tab">
+                    <div class="chart-container">
+                        <canvas id="brechaSalarialChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Brecha Salarial</h4>
+                        <p>La brecha salarial en el sector público chileno se ha mantenido relativamente estable durante el período analizado, fluctuando entre el 17.4% y el 19.2%. Aunque ha habido una ligera disminución en 2024 (17.4%), en 2025 volvió a aumentar al 17.8%. Esto indica que, a pesar de los esfuerzos por promover la equidad salarial, persisten diferencias significativas en los ingresos entre hombres y mujeres en el empleo público.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Segregación Ocupacional -->
+                <div class="tab-pane fade" id="segOcupacional" role="tabpanel" aria-labelledby="segOcupacional-tab">
+                    <div class="filter-container">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="segOcupacionalYear" class="form-label">Seleccionar Año:</label>
+                                <select id="segOcupacionalYear" class="form-select">
+                                    <option value="2022">2022</option>
+                                    <option value="2023">2023</option>
+                                    <option value="2024">2024</option>
+                                    <option value="2025">2025</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="segregacionOcupacionalChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Segregación Ocupacional</h4>
+                        <p>Existe una clara segregación ocupacional por género en el sector público. Las categorías con mayor participación femenina son "Oficios y Servicios" (66.3% en 2022) y "Técnico / Tecnólogo" (73.7% en 2022), mientras que "Profesional Universitario Técnicos" muestra una distribución más equitativa (47.8% mujeres en 2022). Esta segregación contribuye a mantener las diferencias salariales, ya que las categorías dominadas por mujeres suelen tener menores remuneraciones.</p>
+                    </div>
+                </div>
+                
+                <!-- Tab Por Año -->
+                <div class="tab-pane fade" id="indicadoresPorAno" role="tabpanel" aria-labelledby="indicadoresPorAno-tab">
+                    <div class="chart-container">
+                        <canvas id="indicadoresPorAnoChart"></canvas>
+                    </div>
+                    <div class="analysis-box">
+                        <h4>Análisis de Indicadores por Año</h4>
+                        <p>Los indicadores de equidad muestran una mejora marginal durante el período analizado. La brecha salarial disminuyó del 19.2% en 2022 al 17.8% en 2025, aunque con fluctuaciones. La participación femenina en categorías mejor remuneradas ha aumentado ligeramente, pasando del 34.0% en "Profesional Universitario Salud" en 2022 al 34.5% en 2025. Sin embargo, estos avances son insuficientes para lograr una equidad sustancial en el corto plazo.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección de conclusiones -->
+    <section id="conclusiones" class="section">
+        <div class="container">
+            <h2 class="section-title">Conclusiones</h2>
+            
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="conclusion-card">
+                        <h3><i class="bi bi-graph-up-arrow text-primary me-2"></i>Tendencias Generales</h3>
+                        <p>El empleo público en Chile muestra una clara predominancia femenina (65.3% en 2025), con una ligera tendencia al aumento de la participación masculina. La masa salarial total ha crecido significativamente, pero la distribución por sexo revela que los hombres concentran mejores remuneraciones a pesar de su menor número.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="conclusion-card">
+                        <h3><i class="bi bi-cash-coin text-danger me-2"></i>Brecha Salarial Persistente</h3>
+                        <p>La brecha salarial se ha mantenido relativamente estable alrededor del 18% durante todo el período, indicando que las políticas de equidad no han logrado reducirla significativamente. Esta brecha es más pronunciada en ciertos tipos de contrato y grupos de edad.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mt-4">
+                <div class="col-md-6">
+                    <div class="conclusion-card">
+                        <h3><i class="bi bi-building text-info me-2"></i>Segregación por Institución</h3>
+                        <p>Existe una clara segregación por tipo de organismo, con mayor participación femenina en Corporaciones Municipales y Ministerios, mientras que en Otros Organismos la distribución es más equitativa. Esta segregación contribuye a mantener las diferencias salariales.</p>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="conclusion-card">
+                        <h3><i class="bi bi-briefcase-fill text-success me-2"></i>Segregación Ocupacional</h3>
+                        <p>Las mujeres predominan en categorías como "Oficios y Servicios" y "Técnico / Tecnólogo", que suelen tener menores remuneraciones. En contraste, los hombres están mejor representados en categorías mejor remuneradas como "Profesional Universitario Técnicos".</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="conclusion-card mt-4">
+                <h3><i class="bi bi-lightbulb text-warning me-2"></i>Recomendaciones</h3>
+                <p>Para avanzar hacia una mayor equidad en el empleo público, se recomienda implementar políticas activas que promuevan la participación femenina en categorías mejor remuneradas, auditorías salariales periódicas para identificar y corregir brechas, y medidas para reducir la segregación ocupacional por género. Además, es necesario fortalecer los mecanismos de transparencia y rendición de cuentas en materia de equidad de género.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2023 Análisis de Empleo Público por Sexo - Chile. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Datos del PDF estructurados para su uso en los gráficos
+        const datos = {
+            resumen: [
+                { año: 2022, totalPersonas: 732880, porcentajeHombres: 34.5, porcentajeMujeres: 65.5, 
+                  remuneracionPromedioHombres: 1712638, remuneracionPromedioMujeres: 1383804, 
+                  brechaSalarial: 19.2, remuneracionPromedioTotal: 1494905 },
+                { año: 2023, totalPersonas: 777799, porcentajeHombres: 34.5, porcentajeMujeres: 65.5, 
+                  remuneracionPromedioHombres: 1881694, remuneracionPromedioMujeres: 1539113, 
+                  brechaSalarial: 18.2, remuneracionPromedioTotal: 1654182 },
+                { año: 2024, totalPersonas: 854618, porcentajeHombres: 34.8, porcentajeMujeres: 65.2, 
+                  remuneracionPromedioHombres: 1898684, remuneracionPromedioMujeres: 1567435, 
+                  brechaSalarial: 17.4, remuneracionPromedioTotal: 1679195 },
+                { año: 2025, totalPersonas: 854641, porcentajeHombres: 35.0, porcentajeMujeres: 65.0, 
+                  remuneracionPromedioHombres: 2115821, remuneracionPromedioMujeres: 1739808, 
+                  brechaSalarial: 17.8, remuneracionPromedioTotal: 1866984 }
+            ],
+            tipoContrato: [
+                { tipo: "Cod Trabajo", año: 2022, hombres: 37187, mujeres: 101121, porcentajeHombres: 26.9, porcentajeMujeres: 73.1, 
+                  remuneracionPromedioHombres: 1069926, remuneracionPromedioMujeres: 869193, brechaSalarial: 18.8 },
+                { tipo: "Cod Trabajo", año: 2023, hombres: 42884, mujeres: 110608, porcentajeHombres: 27.9, porcentajeMujeres: 72.1, 
+                  remuneracionPromedioHombres: 1205318, remuneracionPromedioMujeres: 979579, brechaSalarial: 18.7 },
+                { tipo: "Cod Trabajo", año: 2024, hombres: 47062, mujeres: 115928, porcentajeHombres: 28.9, porcentajeMujeres: 71.1, 
+                  remuneracionPromedioHombres: 1292399, remuneracionPromedioMujeres: 1053792, brechaSalarial: 18.5 },
+                { tipo: "Cod Trabajo", año: 2025, hombres: 45732, mujeres: 115203, porcentajeHombres: 28.4, porcentajeMujeres: 71.6, 
+                  remuneracionPromedioHombres: 1457298, remuneracionPromedioMujeres: 1177047, brechaSalarial: 19.2 },
+                { tipo: "Contrata", año: 2022, hombres: 103911, mujeres: 185756, porcentajeHombres: 35.9, porcentajeMujeres: 64.1, 
+                  remuneracionPromedioHombres: 1899664, remuneracionPromedioMujeres: 1523482, brechaSalarial: 19.8 },
+                { tipo: "Contrata", año: 2023, hombres: 110063, mujeres: 197863, porcentajeHombres: 35.7, porcentajeMujeres: 64.3, 
+                  remuneracionPromedioHombres: 2083032, remuneracionPromedioMujeres: 1681734, brechaSalarial: 19.3 },
+                { tipo: "Contrata", año: 2024, hombres: 122996, mujeres: 221150, porcentajeHombres: 35.7, porcentajeMujeres: 64.3, 
+                  remuneracionPromedioHombres: 2150040, remuneracionPromedioMujeres: 1704080, brechaSalarial: 20.7 },
+                { tipo: "Contrata", año: 2025, hombres: 131235, mujeres: 233327, porcentajeHombres: 36.0, porcentajeMujeres: 64.0, 
+                  remuneracionPromedioHombres: 2405409, remuneracionPromedioMujeres: 1905822, brechaSalarial: 20.8 },
+                { tipo: "Honorarios", año: 2022, hombres: 45861, mujeres: 65817, porcentajeHombres: 41.1, porcentajeMujeres: 58.9, 
+                  remuneracionPromedioHombres: 1345970, remuneracionPromedioMujeres: 1172293, brechaSalarial: 12.9 },
+                { tipo: "Honorarios", año: 2023, hombres: 45968, mujeres: 62927, porcentajeHombres: 42.2, porcentajeMujeres: 57.8, 
+                  remuneracionPromedioHombres: 1447245, remuneracionPromedioMujeres: 1227958, brechaSalarial: 15.2 },
+                { tipo: "Honorarios", año: 2024, hombres: 52649, mujeres: 71405, porcentajeHombres: 42.4, porcentajeMujeres: 57.6, 
+                  remuneracionPromedioHombres: 1130993, remuneracionPromedioMujeres: 946982, brechaSalarial: 16.3 },
+                { tipo: "Honorarios", año: 2025, hombres: 47129, mujeres: 58181, porcentajeHombres: 44.8, porcentajeMujeres: 55.2, 
+                  remuneracionPromedioHombres: 1250797, remuneracionPromedioMujeres: 1063866, brechaSalarial: 14.9 },
+                { tipo: "Planta", año: 2022, hombres: 63353, mujeres: 122355, porcentajeHombres: 34.1, porcentajeMujeres: 65.9, 
+                  remuneracionPromedioHombres: 2048569, remuneracionPromedioMujeres: 1710828, brechaSalarial: 16.5 },
+                { tipo: "Planta", año: 2023, hombres: 66535, mujeres: 132501, porcentajeHombres: 33.4, porcentajeMujeres: 66.6, 
+                  remuneracionPromedioHombres: 2284738, remuneracionPromedioMujeres: 1940993, brechaSalarial: 15.0 },
+                { tipo: "Planta", año: 2024, hombres: 71457, mujeres: 142256, porcentajeHombres: 33.4, porcentajeMujeres: 66.6, 
+                  remuneracionPromedioHombres: 2430967, remuneracionPromedioMujeres: 2085024, brechaSalarial: 14.2 },
+                { tipo: "Planta", año: 2025, hombres: 71153, mujeres: 142650, porcentajeHombres: 33.3, porcentajeMujeres: 66.7, 
+                  remuneracionPromedioHombres: 2577913, remuneracionPromedioMujeres: 2198437, brechaSalarial: 14.7 }
+            ],
+            claseEdad: [
+                { edad: "18 a 30", año: 2022, hombres: 29769, mujeres: 71222, porcentajeHombres: 29.5, porcentajeMujeres: 70.5, 
+                  remuneracionPromedioHombres: 1216704, remuneracionPromedioMujeres: 1004808, brechaSalarial: 17.4 },
+                { edad: "18 a 30", año: 2023, hombres: 31227, mujeres: 70086, porcentajeHombres: 30.8, porcentajeMujeres: 69.2, 
+                  remuneracionPromedioHombres: 1254370, remuneracionPromedioMujeres: 1073270, brechaSalarial: 14.4 },
+                { edad: "18 a 30", año: 2024, hombres: 35268, mujeres: 73625, porcentajeHombres: 32.4, porcentajeMujeres: 67.6, 
+                  remuneracionPromedioHombres: 1196631, remuneracionPromedioMujeres: 1047135, brechaSalarial: 12.5 },
+                { edad: "18 a 30", año: 2025, hombres: 31731, mujeres: 65149, porcentajeHombres: 32.8, porcentajeMujeres: 67.2, 
+                  remuneracionPromedioHombres: 1341382, remuneracionPromedioMujeres: 1146479, brechaSalarial: 14.5 },
+                { edad: "30 a 50", año: 2022, hombres: 131790, mujeres: 280263, porcentajeHombres: 32.0, porcentajeMujeres: 68.0, 
+                  remuneracionPromedioHombres: 1744875, remuneracionPromedioMujeres: 1394618, brechaSalarial: 20.1 },
+                { edad: "30 a 50", año: 2023, hombres: 140949, mujeres: 300676, porcentajeHombres: 31.9, porcentajeMujeres: 68.1, 
+                  remuneracionPromedioHombres: 1930207, remuneracionPromedioMujeres: 1554106, brechaSalarial: 19.5 },
+                { edad: "30 a 50", año: 2024, hombres: 156139, mujeres: 330789, porcentajeHombres: 32.1, porcentajeMujeres: 67.9, 
+                  remuneracionPromedioHombres: 1945734, remuneracionPromedioMujeres: 1580475, brechaSalarial: 18.8 },
+                { edad: "30 a 50", año: 2025, hombres: 157564, mujeres: 332083, porcentajeHombres: 32.2, porcentajeMujeres: 67.8, 
+                  remuneracionPromedioHombres: 2151805, remuneracionPromedioMujeres: 1741810, brechaSalarial: 19.1 },
+                { edad: "50 a 65", año: 2022, hombres: 60426, mujeres: 102181, porcentajeHombres: 37.2, porcentajeMujeres: 62.8, 
+                  remuneracionPromedioHombres: 1766824, remuneracionPromedioMujeres: 1528361, brechaSalarial: 13.5 },
+                { edad: "50 a 65", año: 2023, hombres: 64508, mujeres: 110218, porcentajeHombres: 36.9, porcentajeMujeres: 63.1, 
+                  remuneracionPromedioHombres: 1964825, remuneracionPromedioMujeres: 1697398, brechaSalarial: 13.6 },
+                { edad: "50 a 65", año: 2024, hombres: 71999, mujeres: 121877, porcentajeHombres: 37.1, porcentajeMujeres: 62.9, 
+                  remuneracionPromedioHombres: 2020606, remuneracionPromedioMujeres: 1750142, brechaSalarial: 13.4 },
+                { edad: "50 a 65", año: 2025, hombres: 73871, mujeres: 126617, porcentajeHombres: 36.8, porcentajeMujeres: 63.2, 
+                  remuneracionPromedioHombres: 2262896, remuneracionPromedioMujeres: 1941474, brechaSalarial: 14.2 },
+                { edad: "65 a 85", año: 2022, hombres: 28327, mujeres: 21383, porcentajeHombres: 57.0, porcentajeMujeres: 43.0, 
+                  remuneracionPromedioHombres: 1968252, remuneracionPromedioMujeres: 1813644, brechaSalarial: 7.9 },
+                { edad: "65 a 85", año: 2023, hombres: 28766, mujeres: 22919, porcentajeHombres: 55.7, porcentajeMujeres: 44.3, 
+                  remuneracionPromedioHombres: 2138559, remuneracionPromedioMujeres: 2005761, brechaSalarial: 6.2 },
+                { edad: "65 a 85", año: 2024, hombres: 30758, mujeres: 24448, porcentajeHombres: 55.7, porcentajeMujeres: 44.3, 
+                  remuneracionPromedioHombres: 2179434, remuneracionPromedioMujeres: 2047057, brechaSalarial: 6.1 },
+                { edad: "65 a 85", año: 2025, hombres: 32083, mujeres: 25512, porcentajeHombres: 55.7, porcentajeMujeres: 44.3, 
+                  remuneracionPromedioHombres: 2366402, remuneracionPromedioMujeres: 2228044, brechaSalarial: 5.8 }
+            ],
+            tipoOrganismo: [
+                { organismo: "Corporaciones Municipales", año: 2022, hombres: 19273, mujeres: 45123, porcentajeHombres: 29.9, porcentajeMujeres: 70.1, 
+                  remuneracionPromedioHombres: 1392216, remuneracionPromedioMujeres: 1254676, brechaSalarial: 9.9 },
+                { organismo: "Corporaciones Municipales", año: 2023, hombres: 22585, mujeres: 53031, porcentajeHombres: 29.9, porcentajeMujeres: 70.1, 
+                  remuneracionPromedioHombres: 1638564, remuneracionPromedioMujeres: 1445988, brechaSalarial: 11.8 },
+                { organismo: "Corporaciones Municipales", año: 2024, hombres: 23659, mujeres: 53034, porcentajeHombres: 30.8, porcentajeMujeres: 69.2, 
+                  remuneracionPromedioHombres: 1783261, remuneracionPromedioMujeres: 1585068, brechaSalarial: 11.1 },
+                { organismo: "Corporaciones Municipales", año: 2025, hombres: 22523, mujeres: 49508, porcentajeHombres: 31.3, porcentajeMujeres: 68.7, 
+                  remuneracionPromedioHombres: 1845563, remuneracionPromedioMujeres: 1631903, brechaSalarial: 11.6 },
+                { organismo: "Ministerio (25)", año: 2022, hombres: 128723, mujeres: 235888, porcentajeHombres: 35.3, porcentajeMujeres: 64.7, 
+                  remuneracionPromedioHombres: 2129593, remuneracionPromedioMujeres: 1655542, brechaSalarial: 22.3 },
+                { organismo: "Ministerio (25)", año: 2023, hombres: 133960, mujeres: 244771, porcentajeHombres: 35.4, porcentajeMujeres: 64.6, 
+                  remuneracionPromedioHombres: 2317554, remuneracionPromedioMujeres: 1828916, brechaSalarial: 21.1 },
+                { organismo: "Ministerio (25)", año: 2024, hombres: 148932, mujeres: 274945, porcentajeHombres: 35.1, porcentajeMujeres: 64.9, 
+                  remuneracionPromedioHombres: 2240559, remuneracionPromedioMujeres: 1765384, brechaSalarial: 21.2 },
+                { organismo: "Ministerio (25)", año: 2025, hombres: 149345, mujeres: 280966, porcentajeHombres: 34.7, porcentajeMujeres: 65.3, 
+                  remuneracionPromedioHombres: 2598199, remuneracionPromedioMujeres: 2013970, brechaSalarial: 22.5 },
+                { organismo: "Municipio", año: 2022, hombres: 99489, mujeres: 167808, porcentajeHombres: 37.2, porcentajeMujeres: 62.8, 
+                  remuneracionPromedioHombres: 1235895, remuneracionPromedioMujeres: 1128633, brechaSalarial: 8.7 },
+                { organismo: "Municipio", año: 2023, hombres: 105796, mujeres: 179143, porcentajeHombres: 37.1, porcentajeMujeres: 62.9, 
+                  remuneracionPromedioHombres: 1376949, remuneracionPromedioMujeres: 1262861, brechaSalarial: 8.3 },
+                { organismo: "Municipio", año: 2024, hombres: 115495, mujeres: 192846, porcentajeHombres: 37.5, porcentajeMujeres: 62.5, 
+                  remuneracionPromedioHombres: 1451204, remuneracionPromedioMujeres: 1345160, brechaSalarial: 7.3 },
+                { organismo: "Municipio", año: 2025, hombres: 114483, mujeres: 185950, porcentajeHombres: 38.1, porcentajeMujeres: 61.9, 
+                  remuneracionPromedioHombres: 1527442, remuneracionPromedioMujeres: 1422518, brechaSalarial: 6.9 },
+                { organismo: "Otros Organismos", año: 2022, hombres: 2827, mujeres: 26230, porcentajeHombres: 9.7, porcentajeMujeres: 90.3, 
+                  remuneracionPromedioHombres: 1689481, remuneracionPromedioMujeres: 794667, brechaSalarial: 53.0 },
+                { organismo: "Otros Organismos", año: 2023, hombres: 3109, mujeres: 26954, porcentajeHombres: 10.3, porcentajeMujeres: 89.7, 
+                  remuneracionPromedioHombres: 2043588, remuneracionPromedioMujeres: 926658, brechaSalarial: 54.7 },
+                { organismo: "Otros Organismos", año: 2024, hombres: 6078, mujeres: 29914, porcentajeHombres: 16.9, porcentajeMujeres: 83.1, 
+                  remuneracionPromedioHombres: 2473914, remuneracionPromedioMujeres: 1149729, brechaSalarial: 53.5 },
+                { organismo: "Otros Organismos", año: 2025, hombres: 8898, mujeres: 32937, porcentajeHombres: 21.3, porcentajeMujeres: 78.7, 
+                  remuneracionPromedioHombres: 2273807, remuneracionPromedioMujeres: 1354598, brechaSalarial: 40.4 }
+            ],
+            categoriaCalificacion: [
+                { categoria: "Oficios y Servicios", año: 2022, hombres: 19854, mujeres: 39116, porcentajeHombres: 33.7, porcentajeMujeres: 66.3, 
+                  remuneracionPromedioHombres: 962664, remuneracionPromedioMujeres: 916955, brechaSalarial: 4.7 },
+                { categoria: "Oficios y Servicios", año: 2023, hombres: 21104, mujeres: 43394, porcentajeHombres: 32.7, porcentajeMujeres: 67.3, 
+                  remuneracionPromedioHombres: 1051094, remuneracionPromedioMujeres: 1005955, brechaSalarial: 4.3 },
+                { categoria: "Oficios y Servicios", año: 2024, hombres: 21002, mujeres: 43281, porcentajeHombres: 32.7, porcentajeMujeres: 67.3, 
+                  remuneracionPromedioHombres: 1114247, remuneracionPromedioMujeres: 1062280, brechaSalarial: 4.7 },
+                { categoria: "Oficios y Servicios", año: 2025, hombres: 22221, mujeres: 46061, porcentajeHombres: 32.5, porcentajeMujeres: 67.5, 
+                  remuneracionPromedioHombres: 1161322, remuneracionPromedioMujeres: 1112606, brechaSalarial: 4.2 },
+                { categoria: "Otros / Sin Información", año: 2022, hombres: 71231, mujeres: 97135, porcentajeHombres: 42.3, porcentajeMujeres: 57.7, 
+                  remuneracionPromedioHombres: 1031226, remuneracionPromedioMujeres: 870553, brechaSalarial: 15.6 },
+                { categoria: "Otros / Sin Información", año: 2023, hombres: 76313, mujeres: 108886, porcentajeHombres: 41.2, porcentajeMujeres: 58.8, 
+                  remuneracionPromedioHombres: 1124784, remuneracionPromedioMujeres: 953225, brechaSalarial: 15.3 },
+                { categoria: "Otros / Sin Información", año: 2024, hombres: 91532, mujeres: 131047, porcentajeHombres: 41.1, porcentajeMujeres: 58.9, 
+                  remuneracionPromedioHombres: 1124059, remuneracionPromedioMujeres: 964725, brechaSalarial: 14.2 },
+                { categoria: "Otros / Sin Información", año: 2025, hombres: 85774, mujeres: 117948, porcentajeHombres: 42.1, porcentajeMujeres: 57.9, 
+                  remuneracionPromedioHombres: 1270275, remuneracionPromedioMujeres: 1089586, brechaSalarial: 14.2 },
+                { categoria: "Profesional Universitario Salud", año: 2022, hombres: 41935, mujeres: 81236, porcentajeHombres: 34.0, porcentajeMujeres: 66.0, 
+                  remuneracionPromedioHombres: 2598953, remuneracionPromedioMujeres: 2102682, brechaSalarial: 19.1 },
+                { categoria: "Profesional Universitario Salud", año: 2023, hombres: 43833, mujeres: 84103, porcentajeHombres: 34.3, porcentajeMujeres: 65.7, 
+                  remuneracionPromedioHombres: 2793252, remuneracionPromedioMujeres: 2295971, brechaSalarial: 17.8 },
+                { categoria: "Profesional Universitario Salud", año: 2024, hombres: 46568, mujeres: 89981, porcentajeHombres: 34.1, porcentajeMujeres: 65.9, 
+                  remuneracionPromedioHombres: 2889516, remuneracionPromedioMujeres: 2373283, brechaSalarial: 17.9 },
+                { categoria: "Profesional Universitario Salud", año: 2025, hombres: 48604, mujeres: 92116, porcentajeHombres: 34.5, porcentajeMujeres: 65.5, 
+                  remuneracionPromedioHombres: 3071701, remuneracionPromedioMujeres: 2570852, brechaSalarial: 16.3 },
+                { categoria: "Profesional Universitario Sociales y Humanidades", año: 2022, hombres: 46958, mujeres: 132025, porcentajeHombres: 26.2, porcentajeMujeres: 73.8, 
+                  remuneracionPromedioHombres: 1878282, remuneracionPromedioMujeres: 1497450, brechaSalarial: 20.3 },
+                { categoria: "Profesional Universitario Sociales y Humanidades", año: 2023, hombres: 49236, mujeres: 131992, porcentajeHombres: 27.2, porcentajeMujeres: 72.8, 
+                  remuneracionPromedioHombres: 2111301, remuneracionPromedioMujeres: 1734452, brechaSalarial: 17.8 },
+                { categoria: "Profesional Universitario Sociales y Humanidades", año: 2024, hombres: 53679, mujeres: 142260, porcentajeHombres: 27.4, porcentajeMujeres: 72.6, 
+                  remuneracionPromedioHombres: 2184982, remuneracionPromedioMujeres: 1788158, brechaSalarial: 18.2 },
+                { categoria: "Profesional Universitario Sociales y Humanidades", año: 2025, hombres: 54545, mujeres: 143790, porcentajeHombres: 27.5, porcentajeMujeres: 72.5, 
+                  remuneracionPromedioHombres: 2387008, remuneracionPromedioMujeres: 1962683, brechaSalarial: 17.8 },
+                { categoria: "Profesional Universitario Técnicos", año: 2022, hombres: 37970, mujeres: 34788, porcentajeHombres: 52.2, porcentajeMujeres: 47.8, 
+                  remuneracionPromedioHombres: 2530777, remuneracionPromedioMujeres: 2203180, brechaSalarial: 12.9 },
+                { categoria: "Profesional Universitario Técnicos", año: 2023, hombres: 41252, mujeres: 40110, porcentajeHombres: 50.7, porcentajeMujeres: 49.3, 
+                  remuneracionPromedioHombres: 2774561, remuneracionPromedioMujeres: 2411273, brechaSalarial: 13.1 },
+                { categoria: "Profesional Universitario Técnicos", año: 2024, hombres: 45045, mujeres: 42739, porcentajeHombres: 51.3, porcentajeMujeres: 48.7, 
+                  remuneracionPromedioHombres: 2712056, remuneracionPromedioMujeres: 2364466, brechaSalarial: 12.8 },
+                { categoria: "Profesional Universitario Técnicos", año: 2025, hombres: 46769, mujeres: 45408, porcentajeHombres: 50.7, porcentajeMujeres: 49.3, 
+                  remuneracionPromedioHombres: 3107675, remuneracionPromedioMujeres: 2691066, brechaSalarial: 13.4 },
+                { categoria: "Técnico / Tecnólogo", año: 2022, hombres: 32364, mujeres: 90749, porcentajeHombres: 26.3, porcentajeMujeres: 73.7, 
+                  remuneracionPromedioHombres: 1323843, remuneracionPromedioMujeres: 1011444, brechaSalarial: 23.6 },
+                { categoria: "Técnico / Tecnólogo", año: 2023, hombres: 33712, mujeres: 95414, porcentajeHombres: 26.1, porcentajeMujeres: 73.9, 
+                  remuneracionPromedioHombres: 1501926, remuneracionPromedioMujeres: 1146207, brechaSalarial: 23.7 },
+                { categoria: "Técnico / Tecnólogo", año: 2024, hombres: 36338, mujeres: 101431, porcentajeHombres: 26.4, porcentajeMujeres: 73.6, 
+                  remuneracionPromedioHombres: 1602301, remuneracionPromedioMujeres: 1201389, brechaSalarial: 25.0 },
+                { categoria: "Técnico / Tecnólogo", año: 2025, hombres: 37336, mujeres: 104038, porcentajeHombres: 26.4, porcentajeMujeres: 73.6, 
+                  remuneracionPromedioHombres: 1743425, remuneracionPromedioMujeres: 1295623, brechaSalarial: 25.7 }
+            ]
+        };
+
+        // Configuración global para los gráficos
+        Chart.defaults.font.family = "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif";
+        Chart.defaults.color = "#333";
+
+        // Función para formatear números
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        // Función para formatear moneda
+        function formatCurrency(value) {
+            return '$' + formatNumber(Math.round(value));
+        }
+
+        // Función para actualizar el resumen según el año seleccionado
+        function actualizarResumen() {
+            const year = document.getElementById('resumenYear').value;
+            const data = datos.resumen.find(d => d.año == year);
+            
+            document.getElementById('totalPersonas').textContent = formatNumber(data.totalPersonas);
+            document.getElementById('porcentajeMujeres').textContent = data.porcentajeMujeres + '%';
+            document.getElementById('brechaSalarial').textContent = data.brechaSalarial + '%';
+            document.getElementById('remuneracionPromedio').textContent = formatCurrency(data.remuneracionPromedioTotal);
+            
+            // Actualizar análisis
+            document.getElementById('resumenAnalysis').innerHTML = `
+                En el año ${year}, el empleo público en Chile contaba con ${formatNumber(data.totalPersonas)} personas, de las cuales el ${data.porcentajeMujeres}% son mujeres y el ${data.porcentajeHombres}% son hombres. 
+                La brecha salarial fue del ${data.brechaSalarial}%, lo que indica que las mujeres ganan en promedio un ${data.brechaSalarial}% menos que los hombres. 
+                La remuneración promedio general fue de ${formatCurrency(data.remuneracionPromedioTotal)} CLP mensuales.
+            `;
+            
+            // Actualizar gráficos
+            actualizarResumenParticipacionChart(data);
+            actualizarResumenRemuneracionChart(data);
+        }
+
+        // Gráfico de participación en resumen
+        function actualizarResumenParticipacionChart(data) {
+            const ctx = document.getElementById('resumenParticipacionChart');
+            if (!ctx) return;
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.resumenParticipacionChartInstance) {
+                window.resumenParticipacionChartInstance.destroy();
+            }
+            
+            window.resumenParticipacionChartInstance = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hombres', 'Mujeres'],
+                    datasets: [{
+                        data: [data.porcentajeHombres, data.porcentajeMujeres],
+                        backgroundColor: ['#457b9d', '#e63946'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de remuneración en resumen
+        function actualizarResumenRemuneracionChart(data) {
+            const ctx = document.getElementById('resumenRemuneracionChart');
+            if (!ctx) return;
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.resumenRemuneracionChartInstance) {
+                window.resumenRemuneracionChartInstance.destroy();
+            }
+            
+            window.resumenRemuneracionChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Hombres', 'Mujeres'],
+                    datasets: [{
+                        label: 'Remuneración Promedio (CLP)',
+                        data: [data.remuneracionPromedioHombres, data.remuneracionPromedioMujeres],
+                        backgroundColor: ['#457b9d', '#e63946'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return formatCurrency(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de participación global
+        function crearParticipacionGlobalChart() {
+            const ctx = document.getElementById('participacionGlobalChart');
+            if (!ctx) return;
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.participacionGlobalChartInstance) {
+                window.participacionGlobalChartInstance.destroy();
+            }
+            
+            window.participacionGlobalChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: datos.resumen.map(d => d.año),
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: datos.resumen.map(d => d.porcentajeHombres),
+                            borderColor: '#457b9d',
+                            backgroundColor: 'rgba(69, 123, 157, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: datos.resumen.map(d => d.porcentajeMujeres),
+                            borderColor: '#e63946',
+                            backgroundColor: 'rgba(230, 57, 70, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 30,
+                            max: 70,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de participación por año
+        function crearParticipacionPorAnoChart() {
+            const ctx = document.getElementById('participacionPorAnoChart');
+            if (!ctx) return;
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.participacionPorAnoChartInstance) {
+                window.participacionPorAnoChartInstance.destroy();
+            }
+            
+            window.participacionPorAnoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: datos.resumen.map(d => d.año),
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: datos.resumen.map(d => d.porcentajeHombres),
+                            backgroundColor: '#457b9d',
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: datos.resumen.map(d => d.porcentajeMujeres),
+                            backgroundColor: '#e63946',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 30,
+                            max: 70,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de participación por tipo de contrato
+        function crearParticipacionTipoContratoChart(year = 2022) {
+            const ctx = document.getElementById('participacionTipoContratoChart');
+            if (!ctx) return;
+            
+            const tipos = [...new Set(datos.tipoContrato.map(d => d.tipo))];
+            
+            const hombres = tipos.map(tipo => {
+                const item = datos.tipoContrato.find(d => d.tipo === tipo && d.año == year);
+                return item ? item.porcentajeHombres : 0;
+            });
+            
+            const mujeres = tipos.map(tipo => {
+                const item = datos.tipoContrato.find(d => d.tipo === tipo && d.año == year);
+                return item ? item.porcentajeMujeres : 0;
+            });
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.participacionTipoContratoChartInstance) {
+                window.participacionTipoContratoChartInstance.destroy();
+            }
+            
+            window.participacionTipoContratoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: tipos,
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: hombres,
+                            backgroundColor: '#457b9d',
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: mujeres,
+                            backgroundColor: '#e63946',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de participación por clase de edad
+        function crearParticipacionClaseEdadChart(year = 2022) {
+            const ctx = document.getElementById('participacionClaseEdadChart');
+            if (!ctx) return;
+            
+            const edades = [...new Set(datos.claseEdad.map(d => d.edad))];
+            
+            const hombres = edades.map(edad => {
+                const item = datos.claseEdad.find(d => d.edad === edad && d.año == year);
+                return item ? item.porcentajeHombres : 0;
+            });
+            
+            const mujeres = edades.map(edad => {
+                const item = datos.claseEdad.find(d => d.edad === edad && d.año == year);
+                return item ? item.porcentajeMujeres : 0;
+            });
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.participacionClaseEdadChartInstance) {
+                window.participacionClaseEdadChartInstance.destroy();
+            }
+            
+            window.participacionClaseEdadChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: edades,
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: hombres,
+                            backgroundColor: '#457b9d',
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: mujeres,
+                            backgroundColor: '#e63946',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de participación por tipo de organismo
+        function crearParticipacionOrganismoChart(year = 2022) {
+            const ctx = document.getElementById('participacionOrganismoChart');
+            if (!ctx) return;
+            
+            const organismos = [...new Set(datos.tipoOrganismo.map(d => d.organismo))];
+            
+            const hombres = organismos.map(org => {
+                const item = datos.tipoOrganismo.find(d => d.organismo === org && d.año == year);
+                return item ? item.porcentajeHombres : 0;
+            });
+            
+            const mujeres = organismos.map(org => {
+                const item = datos.tipoOrganismo.find(d => d.organismo === org && d.año == year);
+                return item ? item.porcentajeMujeres : 0;
+            });
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.participacionOrganismoChartInstance) {
+                window.participacionOrganismoChartInstance.destroy();
+            }
+            
+            window.participacionOrganismoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: organismos,
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: hombres,
+                            backgroundColor: '#457b9d',
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: mujeres,
+                            backgroundColor: '#e63946',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de remuneraciones global
+        function crearRemuneracionesGlobalChart() {
+            const ctx = document.getElementById('remuneracionesGlobalChart');
+            if (!ctx) return;
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.remuneracionesGlobalChartInstance) {
+                window.remuneracionesGlobalChartInstance.destroy();
+            }
+            
+            window.remuneracionesGlobalChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: datos.resumen.map(d => d.año),
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: datos.resumen.map(d => d.remuneracionPromedioHombres),
+                            borderColor: '#457b9d',
+                            backgroundColor: 'rgba(69, 123, 157, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: datos.resumen.map(d => d.remuneracionPromedioMujeres),
+                            borderColor: '#e63946',
+                            backgroundColor: 'rgba(230, 57, 70, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de remuneraciones por año
+        function crearRemuneracionesPorAnoChart() {
+            const ctx = document.getElementById('remuneracionesPorAnoChart');
+            if (!ctx) return;
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.remuneracionesPorAnoChartInstance) {
+                window.remuneracionesPorAnoChartInstance.destroy();
+            }
+            
+            window.remuneracionesPorAnoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: datos.resumen.map(d => d.año),
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: datos.resumen.map(d => d.remuneracionPromedioHombres),
+                            backgroundColor: '#457b9d',
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: datos.resumen.map(d => d.remuneracionPromedioMujeres),
+                            backgroundColor: '#e63946',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de remuneraciones por tipo de contrato
+        function crearRemuneracionesTipoContratoChart(year = 2022) {
+            const ctx = document.getElementById('remuneracionesTipoContratoChart');
+            if (!ctx) return;
+            
+            const tipos = [...new Set(datos.tipoContrato.map(d => d.tipo))];
+            
+            const hombres = tipos.map(tipo => {
+                const item = datos.tipoContrato.find(d => d.tipo === tipo && d.año == year);
+                return item ? item.remuneracionPromedioHombres : 0;
+            });
+            
+            const mujeres = tipos.map(tipo => {
+                const item = datos.tipoContrato.find(d => d.tipo === tipo && d.año == year);
+                return item ? item.remuneracionPromedioMujeres : 0;
+            });
+            
+            const brecha = tipos.map(tipo => {
+                const item = datos.tipoContrato.find(d => d.tipo === tipo && d.año == year);
+                return item ? item.brechaSalarial : 0;
+            });
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.remuneracionesTipoContratoChartInstance) {
+                window.remuneracionesTipoContratoChartInstance.destroy();
+            }
+            
+            window.remuneracionesTipoContratoChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: tipos,
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: hombres,
+                            backgroundColor: '#457b9d',
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: mujeres,
+                            backgroundColor: '#e63946',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+                                },
+                                afterLabel: function(context) {
+                                    const index = context.dataIndex;
+                                    return 'Brecha: ' + brecha[index] + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de remuneraciones por clase de edad
+        function crearRemuneracionesClaseEdadChart(year = 2022) {
+            const ctx = document.getElementById('remuneracionesClaseEdadChart');
+            if (!ctx) return;
+            
+            const edades = [...new Set(datos.claseEdad.map(d => d.edad))];
+            
+            const hombres = edades.map(edad => {
+                const item = datos.claseEdad.find(d => d.edad === edad && d.año == year);
+                return item ? item.remuneracionPromedioHombres : 0;
+            });
+            
+            const mujeres = edades.map(edad => {
+                const item = datos.claseEdad.find(d => d.edad === edad && d.año == year);
+                return item ? item.remuneracionPromedioMujeres : 0;
+            });
+            
+            const brecha = edades.map(edad => {
+                const item = datos.claseEdad.find(d => d.edad === edad && d.año == year);
+                return item ? item.brechaSalarial : 0;
+            });
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.remuneracionesClaseEdadChartInstance) {
+                window.remuneracionesClaseEdadChartInstance.destroy();
+            }
+            
+            window.remuneracionesClaseEdadChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: edades,
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: hombres,
+                            backgroundColor: '#457b9d',
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: mujeres,
+                            backgroundColor: '#e63946',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatCurrency(context.parsed.y);
+                                },
+                                afterLabel: function(context) {
+                                    const index = context.dataIndex;
+                                    return 'Brecha: ' + brecha[index] + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value) {
+                                    return formatCurrency(value);
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de brecha salarial
+        function crearBrechaSalarialChart() {
+            const ctx = document.getElementById('brechaSalarialChart');
+            if (!ctx) return;
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.brechaSalarialChartInstance) {
+                window.brechaSalarialChartInstance.destroy();
+            }
+            
+            window.brechaSalarialChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: datos.resumen.map(d => d.año),
+                    datasets: [{
+                        label: 'Brecha Salarial (%)',
+                        data: datos.resumen.map(d => d.brechaSalarial),
+                        borderColor: '#e63946',
+                        backgroundColor: 'rgba(230, 57, 70, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return 'Brecha: ' + context.parsed.y + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            min: 15,
+                            max: 20,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de segregación ocupacional
+        function crearSegregacionOcupacionalChart(year = 2022) {
+            const ctx = document.getElementById('segregacionOcupacionalChart');
+            if (!ctx) return;
+            
+            const categorias = [...new Set(datos.categoriaCalificacion.map(d => d.categoria))];
+            
+            const hombres = categorias.map(cat => {
+                const item = datos.categoriaCalificacion.find(d => d.categoria === cat && d.año == year);
+                return item ? item.porcentajeHombres : 0;
+            });
+            
+            const mujeres = categorias.map(cat => {
+                const item = datos.categoriaCalificacion.find(d => d.categoria === cat && d.año == year);
+                return item ? item.porcentajeMujeres : 0;
+            });
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.segregacionOcupacionalChartInstance) {
+                window.segregacionOcupacionalChartInstance.destroy();
+            }
+            
+            window.segregacionOcupacionalChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: categorias,
+                    datasets: [
+                        {
+                            label: 'Hombres',
+                            data: hombres,
+                            backgroundColor: '#457b9d',
+                            borderWidth: 0
+                        },
+                        {
+                            label: 'Mujeres',
+                            data: mujeres,
+                            backgroundColor: '#e63946',
+                            borderWidth: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y',
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + context.parsed.x + '%';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: false,
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de indicadores por año
+        function crearIndicadoresPorAnoChart() {
+            const ctx = document.getElementById('indicadoresPorAnoChart');
+            if (!ctx) return;
+            
+            // Verificar si el gráfico ya existe y destruirlo
+            if (window.indicadoresPorAnoChartInstance) {
+                window.indicadoresPorAnoChartInstance.destroy();
+            }
+            
+            window.indicadoresPorAnoChartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: datos.resumen.map(d => d.año),
+                    datasets: [
+                        {
+                            label: 'Brecha Salarial (%)',
+                            data: datos.resumen.map(d => d.brechaSalarial),
+                            borderColor: '#e63946',
+                            backgroundColor: 'rgba(230, 57, 70, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'Participación Femenina (%)',
+                            data: datos.resumen.map(d => d.porcentajeMujeres),
+                            borderColor: '#457b9d',
+                            backgroundColor: 'rgba(69, 123, 157, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: false,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            display: true,
+                            position: 'left',
+                            min: 15,
+                            max: 20,
+                            title: {
+                                display: true,
+                                text: 'Brecha Salarial (%)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        },
+                        y1: {
+                            type: 'linear',
+                            display: true,
+                            position: 'right',
+                            min: 60,
+                            max: 70,
+                            title: {
+                                display: true,
+                                text: 'Participación Femenina (%)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            },
+                            grid: {
+                                drawOnChartArea: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Event listeners para los filtros
+        document.getElementById('resumenYear').addEventListener('change', actualizarResumen);
+        document.getElementById('tipoContratoYear').addEventListener('change', function() {
+            crearParticipacionTipoContratoChart(this.value);
+        });
+        document.getElementById('claseEdadYear').addEventListener('change', function() {
+            crearParticipacionClaseEdadChart(this.value);
+        });
+        document.getElementById('organismoYear').addEventListener('change', function() {
+            crearParticipacionOrganismoChart(this.value);
+        });
+        document.getElementById('remTipoContratoYear').addEventListener('change', function() {
+            crearRemuneracionesTipoContratoChart(this.value);
+        });
+        document.getElementById('remClaseEdadYear').addEventListener('change', function() {
+            crearRemuneracionesClaseEdadChart(this.value);
+        });
+        document.getElementById('segOcupacionalYear').addEventListener('change', function() {
+            crearSegregacionOcupacionalChart(this.value);
+        });
+
+        // Inicializar todos los gráficos cuando la página carga
+        document.addEventListener('DOMContentLoaded', function() {
+            // Resumen
+            actualizarResumen();
+            
+            // Participación
+            setTimeout(() => {
+                crearParticipacionGlobalChart();
+                crearParticipacionPorAnoChart();
+                crearParticipacionTipoContratoChart();
+                crearParticipacionClaseEdadChart();
+                crearParticipacionOrganismoChart();
+                
+                // Remuneraciones
+                crearRemuneracionesGlobalChart();
+                crearRemuneracionesPorAnoChart();
+                crearRemuneracionesTipoContratoChart();
+                crearRemuneracionesClaseEdadChart();
+                
+                // Indicadores
+                crearBrechaSalarialChart();
+                crearSegregacionOcupacionalChart();
+                crearIndicadoresPorAnoChart();
+            }, 100); // Pequeño retraso para asegurar que el DOM esté completamente cargado
+        });
+
+        // Smooth scrolling para los enlaces de navegación
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

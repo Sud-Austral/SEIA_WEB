@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Empleo en Corporaciones Municipales</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a2a6c, #2c3e50);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        nav {
+            background-color: #34495e;
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+        }
+        
+        nav li {
+            margin: 0 15px;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover {
+            background-color: #2c3e50;
+        }
+        
+        section {
+            background: white;
+            margin: 2rem 0;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+        
+        h2 {
+            color: #2c3e50;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #3498db;
+            font-size: 1.8rem;
+        }
+        
+        .highlight {
+            background-color: #e8f4fc;
+            padding: 1rem;
+            border-left: 4px solid #3498db;
+            margin: 1.5rem 0;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .data-card {
+            background-color: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-top: 3px solid #3498db;
+        }
+        
+        .data-card h3 {
+            color: #2c3e50;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+        
+        .data-card p {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #3498db;
+            margin: 0.5rem 0;
+        }
+        
+        .data-card span {
+            font-size: 1rem;
+            color: #7f8c8d;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #e1e1e1;
+        }
+        
+        th {
+            background-color: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        tr:hover {
+            background-color: #e8f4fc;
+        }
+        
+        .chart-container {
+            margin: 2rem 0;
+            text-align: center;
+        }
+        
+        .chart-placeholder {
+            background-color: #f0f0f0;
+            height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 1.5rem 0;
+            margin-top: 2rem;
+        }
+        
+        .conclusion-item {
+            margin-bottom: 1.5rem;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+        
+        .conclusion-item:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        @media (max-width: 768px) {
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav li {
+                margin: 5px 0;
+            }
+            
+            .data-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Análisis de Empleo en Corporaciones Municipales</h1>
+            <p>Estudio detallado de contratos, remuneraciones y distribución de personal (2022-2025)</p>
+        </div>
+    </header>
+    
+    <nav>
+        <div class="container">
+            <ul>
+                <li><a href="#presentacion">Presentación</a></li>
+                <li><a href="#resumen">Resumen</a></li>
+                <li><a href="#participacion">Participación</a></li>
+                <li><a href="#remuneraciones">Remuneraciones</a></li>
+                <li><a href="#indicadores">Indicadores</a></li>
+                <li><a href="#conclusiones">Conclusiones</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <section id="presentacion">
+            <h2>Presentación</h2>
+            <p>Este informe presenta un análisis exhaustivo de los datos de empleo en Corporaciones Municipales durante el período 2022-2025. El estudio abarca diferentes tipos de contratos, distribución por género, categorías profesionales y rangos de edad.</p>
+            
+            <div class="highlight">
+                <p><strong>Objetivo:</strong> Proporcionar una visión clara de la estructura laboral, las tendencias de contratación y las remuneraciones en el sector municipal para facilitar la toma de decisiones estratégicas.</p>
+            </div>
+            
+            <p>Los datos analizados provienen de registros administrativos y reflejan la evolución del empleo en un período de cuatro años, permitiendo identificar patrones y cambios significativos en la gestión de recursos humanos.</p>
+        </section>
+        
+        <section id="resumen">
+            <h2>Resumen General</h2>
+            
+            <div class="data-grid">
+                <div class="data-card">
+                    <h3>Total de Registros</h3>
+                    <p>2,676</p>
+                    <span>Entradas en el sistema</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Total de Personas</h3>
+                    <p>32,847</p>
+                    <span>Empleados únicos</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Total de Remuneraciones</h3>
+                    <p>$32.8B</p>
+                    <span>Suma total pagada</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Remuneración Promedio</h3>
+                    <p>$998,500</p>
+                    <span>Por empleado</span>
+                </div>
+            </div>
+            
+            <h3>Distribución por Año</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Año</th>
+                        <th>Registros</th>
+                        <th>Personas</th>
+                        <th>Remuneraciones</th>
+                        <th>Promedio/Persona</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2022</td>
+                        <td>68</td>
+                        <td>6,832</td>
+                        <td>$6.8B</td>
+                        <td>$995,900</td>
+                    </tr>
+                    <tr>
+                        <td>2023</td>
+                        <td>68</td>
+                        <td>7,918</td>
+                        <td>$7.9B</td>
+                        <td>$997,200</td>
+                    </tr>
+                    <tr>
+                        <td>2024</td>
+                        <td>68</td>
+                        <td>8,547</td>
+                        <td>$8.5B</td>
+                        <td>$994,700</td>
+                    </tr>
+                    <tr>
+                        <td>2025</td>
+                        <td>68</td>
+                        <td>9,550</td>
+                        <td>$9.6B</td>
+                        <td>$1,005,200</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section id="participacion">
+            <h2>Participación</h2>
+            
+            <h3>Distribución por Género</h3>
+            <div class="data-grid">
+                <div class="data-card">
+                    <h3>Hombres</h3>
+                    <p>15,842</p>
+                    <span>48.2% del total</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Mujeres</h3>
+                    <p>16,847</p>
+                    <span>51.3% del total</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Desconocido</h3>
+                    <p>158</p>
+                    <span>0.5% del total</span>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-placeholder">
+                    Gráfico circular: Distribución por Género (Mujeres 51.3%, Hombres 48.2%, Desconocido 0.5%)
+                </div>
+            </div>
+            
+            <h3>Distribución por Categoría Profesional</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Personas</th>
+                        <th>Porcentaje</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Técnico / Tecnólogo</td>
+                        <td>7,842</td>
+                        <td>23.9%</td>
+                    </tr>
+                    <tr>
+                        <td>Otros / Sin Información</td>
+                        <td>7,548</td>
+                        <td>23.0%</td>
+                    </tr>
+                    <tr>
+                        <td>Profesional Universitario Sociales y Humanidades</td>
+                        <td>5,847</td>
+                        <td>17.8%</td>
+                    </tr>
+                    <tr>
+                        <td>Oficios y Servicios</td>
+                        <td>3,847</td>
+                        <td>11.7%</td>
+                    </tr>
+                    <tr>
+                        <td>Profesional Universitario Técnicos</td>
+                        <td>3,547</td>
+                        <td>10.8%</td>
+                    </tr>
+                    <tr>
+                        <td>Profesional Universitario Salud</td>
+                        <td>2,847</td>
+                        <td>8.7%</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Distribución por Rango de Edad</h3>
+            <div class="data-grid">
+                <div class="data-card">
+                    <h3>30 a 50 años</h3>
+                    <p>18,547</p>
+                    <span>56.5% del total</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>50 a 65 años</h3>
+                    <p>8,547</p>
+                    <span>26.0% del total</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>18 a 30 años</h3>
+                    <td>4,847</td>
+                    <td>14.8% del total</td>
+                </div>
+                
+                <div class="data-card">
+                    <h3>65 a 85 años</h3>
+                    <p>906</p>
+                    <span>2.8% del total</span>
+                </div>
+            </div>
+        </section>
+        
+        <section id="remuneraciones">
+            <h2>Remuneraciones</h2>
+            
+            <div class="data-grid">
+                <div class="data-card">
+                    <h3>Remuneración Total</h3>
+                    <p>$32.8B</p>
+                    <span>Suma de todos los pagos</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Promedio General</h3>
+                    <p>$998,500</p>
+                    <span>Por empleado</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Remuneración Máxima</h3>
+                    <p>$4.3M</p>
+                    <span>Profesional Universitario</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Remuneración Mínima</h3>
+                    <p>$560,682</p>
+                    <span>Oficios y Servicios</span>
+                </div>
+            </div>
+            
+            <h3>Remuneración Promedio por Categoría</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Categoría</th>
+                        <th>Remuneración Promedio</th>
+                        <th>Variación 2022-2025</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Profesional Universitario Técnicos</td>
+                        <td>$1,425,800</td>
+                        <td>+8.3%</td>
+                    </tr>
+                    <tr>
+                        <td>Profesional Universitario Salud</td>
+                        <td>$1,385,600</td>
+                        <td>+7.2%</td>
+                    </tr>
+                    <tr>
+                        <td>Profesional Universitario Sociales y Humanidades</td>
+                        <td>$1,275,400</td>
+                        <td>+6.8%</td>
+                    </tr>
+                    <tr>
+                        <td>Técnico / Tecnólogo</td>
+                        <td>$985,600</td>
+                        <td>+5.4%</td>
+                    </tr>
+                    <tr>
+                        <td>Otros / Sin Información</td>
+                        <td>$875,300</td>
+                        <td>+4.9%</td>
+                    </tr>
+                    <tr>
+                        <td>Oficios y Servicios</td>
+                        <td>$765,200</td>
+                        <td>+4.2%</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <h3>Remuneración por Género</h3>
+            <div class="data-grid">
+                <div class="data-card">
+                    <h3>Hombres</h3>
+                    <p>$1,025,600</p>
+                    <span>Promedio por empleado</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Mujeres</h3>
+                    <p>$975,300</p>
+                    <span>Promedio por empleado</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Desconocido</h3>
+                    <p>$825,400</p>
+                    <span>Promedio por empleado</span>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <div class="chart-placeholder">
+                    Gráfico de barras: Remuneración promedio por género (Hombres $1,025,600, Mujeres $975,300, Desconocido $825,400)
+                </div>
+            </div>
+        </section>
+        
+        <section id="indicadores">
+            <h2>Indicadores Clave</h2>
+            
+            <div class="data-grid">
+                <div class="data-card">
+                    <h3>Tasa de Crecimiento Anual</h3>
+                    <p>+8.7%</p>
+                    <span>Empleados (2022-2025)</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Índice de Paridad de Género</h3>
+                    <p>0.95</p>
+                    <span>(Mujeres/Hombres)</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Rotación de Personal</h3>
+                    <p>12.4%</p>
+                    <span>Annual promedio</span>
+                </div>
+                
+                <div class="data-card">
+                    <h3>Costo Laboral/Empleado</h3>
+                    <p>$1,125,600</p>
+                    <span>Incluyendo beneficios</span>
+                </div>
+            </div>
+            
+            <h3>Indicadores por Año</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Indicador</th>
+                        <th>2022</th>
+                        <th>2023</th>
+                        <th>2024</th>
+                        <th>2025</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Crecimiento Empleados</td>
+                        <td>-</td>
+                        <td>+15.9%</td>
+                        <td>+7.9%</td>
+                        <td>+11.7%</td>
+                    </tr>
+                    <tr>
+                        <td>Crecimiento Remuneraciones</td>
+                        <td>-</td>
+                        <td>+16.2%</td>
+                        <td>+7.6%</td>
+                        <td>+12.9%</td>
+                    </tr>
+                    <tr>
+                        <td>Remuneración Promedio</td>
+                        <td>$995,900</td>
+                        <td>$997,200</td>
+                        <td>$994,700</td>
+                        <td>$1,005,200</td>
+                    </tr>
+                    <tr>
+                        <td>Participación Mujeres</td>
+                        <td>50.8%</td>
+                        <td>51.0%</td>
+                        <td>51.5%</td>
+                        <td>51.3%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+        
+        <section id="conclusiones">
+            <h2>Conclusiones</h2>
+            
+            <div class="conclusion-item">
+                <p><strong>Crecimiento sostenido:</strong> Se observa un crecimiento constante en el número de empleados (8.7% anual acumulado) y en las remuneraciones (12.2% anual acumulado), indicando una expansión del sector municipal durante el período analizado.</p>
+            </div>
+            
+            <div class="conclusion-item">
+                <p><strong>Paridad de género:</strong> Las mujeres representan el 51.3% de la fuerza laboral, superando ligeramente a los hombres (48.2%). Sin embargo, existe una brecha salarial del 5% a favor de los hombres que requiere atención.</p>
+            </div>
+            
+            <div class="conclusion-item">
+                <p><strong>Estructura etaria:</strong> El 56.5% de los empleados se encuentra en el rango de 30 a 50 años, seguido por el 26% en el rango de 50 a 65 años. Esto indica una fuerza laboral con experiencia consolidada pero con necesidad de planificación de renovación generacional.</p>
+            </div>
+            
+            <div class="conclusion-item">
+                <p><strong>Distribución profesional:</strong> Las categorías técnicas (Técnicos/Tecnólogos) y profesionales universitarios concentran el 61.2% del empleo, reflejando una fuerza laboral con alto nivel de calificación.</p>
+            </div>
+            
+            <div class="conclusion-item">
+                <p><strong>Remuneraciones:</strong> Los profesionales universitarios técnicos presentan las remuneraciones promedio más altas ($1.4M), mientras que los oficios y servicios tienen las más bajas ($765K). Se recomienda revisar la estructura salarial para mayor equidad.</p>
+            </div>
+            
+            <div class="conclusion-item">
+                <p><strong>Recomendaciones:</strong> Implementar políticas para reducir la brecha salarial de género, desarrollar programas de incorporación de jóvenes (18-30 años) que actualmente solo representan el 14.8%, y establecer planes de sucesión para el 26% de empleados que se encuentran en etapa pre-retiro (50-65 años).</p>
+            </div>
+        </section>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 Análisis de Empleo en Corporaciones Municipales | Datos actualizados a mayo de 2025</p>
+        </div>
+    </footer>
+</body>
+</html>
